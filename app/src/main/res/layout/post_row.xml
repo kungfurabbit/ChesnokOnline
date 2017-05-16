@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-<android.support.v4.view.ViewPager
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/viewPager">
-
-</android.support.v4.view.ViewPager>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/add_btn"
+            android:id="@+id/post_img"/>
         <TextView
             android:id="@+id/post_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="5dp"
             android:text="Post title"
             android:textColorHighlight="@android:color/darker_gray"
             android:textSize="18dp"
@@ -27,14 +28,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="23dp"
                 android:layout_height="19dp"
-                android:src="@android:drawable/btn_radio" />
+                android:src="@drawable/ic_date_range_black_24dp" />
 
             <TextView
                 android:id="@+id/post_date"
@@ -43,15 +42,17 @@
                 android:text="Post date" />
         </LinearLayout>
 
-        <TextView
+        <com.borjabravo.readmoretextview.ReadMoreTextView
             android:id="@+id/post_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="15dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="Post Description"
-            android:textSize="12dp" />
+            android:text="Post date"
+            android:trimExpandedText="Читать далее"
+            android:trimCollapsedText="Скрыть"
+            app:trimMode="trimModeLength"
+            app:trimLength="20"
+            app:colorClickableText="@android:color/holo_blue_dark"
+            />
 
         <Button
             android:id="@+id/comment"

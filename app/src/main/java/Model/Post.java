@@ -1,7 +1,18 @@
 package Model;
 
+import android.support.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import Interface.SimpleCallback;
 
 /**
  * Created by AlexKarlov on 5/12/2017.
@@ -58,4 +69,25 @@ public class Post {
     public void setPost_desc(String post_desc) {
         this.post_desc = post_desc;
     }
+
+    public void im(@NonNull final SimpleCallback<Map<String, Object>> finishedCallback, String post_key){
+
+        DatabaseReference mDatabase;
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(post_key);
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> newPost = (Map<String, Object>) dataSnapshot.getValue();
+                    finishedCallback.callback(newPost);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 }
