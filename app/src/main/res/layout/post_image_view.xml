@@ -3,8 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
-        android:id="@+id/post_img"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@mipmap/add_btn" />
+        android:layout_height="wrap_content"
+        android:src="@mipmap/add_btn"
+        android:id="@+id/post_img"/>
 </LinearLayout>

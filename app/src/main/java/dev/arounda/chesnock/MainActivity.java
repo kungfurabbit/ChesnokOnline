@@ -2,12 +2,13 @@ package dev.arounda.chesnock;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +30,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 
+import Adapter.PostPagerAdapter;
 import Interface.SimpleCallback;
 import Model.Post;
 
@@ -43,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private DatabaseReference mFirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+
+    private Boolean skip;
+
     public String mUsername,mPhotoUrl,mUserEmail,mUserId;
 
     @Override
@@ -50,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        auth();
+           auth();
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
 
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        if (mFirebaseUser == null) {
+        if (mFirebaseUser == null ) {
             startActivity(new Intent(this, AuthActivity.class));
             finish();
             return;
@@ -99,33 +106,45 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             protected void populateViewHolder(final PostViewHolder viewHolder, Post model, final int position) {
 
                 final String post_key = getRef(position).getKey();
-                model.im(new SimpleCallback<Map<String, Object>>() {
+                model.im(new SimpleCallback<ArrayList<String>>() {
                     @Override
-                    public void callback(Map<String, Object> data) {
+                    public void callback(ArrayList<String> data) {
                         String[] url;
-                        url= data.get("post_img").toString().split(",");
+                        url= data.toString().split(",");
                         for(int i=0; i<url.length; i++){
-                            String res = url[i].substring(url[i].indexOf("=") + 1, url[i].indexOf("}"));
-                            Uri imageUri = Uri.parse( url[i]);
+                            if(url[i].contains("url")) {
+                                Matcher m = Patterns.WEB_URL.matcher(url[i]);
+                                while (m.find()) {
+                                    String urls = m.group();
+                                    String res = url[i].substring(url[i].indexOf("url")+4, url[i].indexOf("}"));
+                                    viewHolder.UriList.add(res);
+                                    viewHolder.imgesList.add(res);
+                                }
+                            }
                         }
+                        viewHolder.setImgPager(viewHolder.imgesList);
                     }
                 }, post_key);
-                String sUrl =model.getPost_img().get(0).toString();
-                String result = sUrl.substring(sUrl.indexOf("=") + 1, sUrl.indexOf("}"));
+                viewHolder.setTitle(model.getPost_title());
                 viewHolder.setTitle(model.getPost_title());
                 viewHolder.setDate(model.getPost_date());
                 viewHolder.setDesc(model.getPost_desc());
-                viewHolder.setImg(result);
 
+                if(mUserId != null){
                 viewHolder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent commnetIntent  = new Intent(MainActivity.this, CommentActivity.class);
-                        commnetIntent.putExtra("post_id", post_key);
-                        commnetIntent.putExtra("user_id", mUserId);
-                        startActivity(commnetIntent);
+                        Intent commentActivity  = new Intent(MainActivity.this, CommentActivity.class);
+                        commentActivity.putExtra("post_id", post_key);
+                        commentActivity.putExtra("user_id", mUserId);
+                        startActivity(commentActivity   );
                     }
                 });
+            } else{
+                    startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                    finish();
+                }
+
             }
         };
         mPostList.setAdapter(firebaseRecyclerAdapter);
@@ -141,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     mFirebaseDatabase.child(mUserId).child("img_url").setValue(mPhotoUrl);
                     mFirebaseDatabase.child(mUserId).child("email").setValue(mUserEmail);
                     mFirebaseDatabase.child(mUserId).child("name").setValue(mUsername);
-
                 }
             }
 
@@ -177,14 +195,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         View mView;
         Context mContext;
         Button mCommentButton;
-
+        List<String> UriList  = new ArrayList<String>();
+        ArrayList<String> imgesList = new ArrayList<String>();
+        ImageView mSwitchImage;
+        int position=0;
         public PostViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
             mContext     = mView.getContext();
             mCommentButton = (Button)mView.findViewById(R.id.comment);
-
-
+            mSwitchImage = (ImageView) mView.findViewById(R.id.post_img);
         }
 
         public void setTitle(String title){
@@ -204,8 +224,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         public void setImg(String image){
             ImageView postImageView = (ImageView) mView.findViewById(R.id.post_img);
-            Picasso.with(mContext).load(image).into(postImageView);
+            Picasso.with(mContext)
+                    .load(image)
+                    .into(postImageView);
         }
+        public void setImgPager(ArrayList<String> imgList){
+            PostPagerAdapter mCustomPagerAdapter = new PostPagerAdapter(mContext, imgList);
+            ViewPager mViewPager = (ViewPager)mView. findViewById(R.id.pagerView);
+            mViewPager.setAdapter(mCustomPagerAdapter);
+        }
+
     }
 }
 

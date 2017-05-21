@@ -10,7 +10,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import Interface.SimpleCallback;
 
@@ -21,21 +20,18 @@ import Interface.SimpleCallback;
 public class Post {
     private String  post_id;
     private String  post_title;
-    private String  post_date;
+    private long  post_date;
     List<Object> post_img = new ArrayList<Object>();
-
     private String  post_desc;
 
-     public Post(){
+     public Post(){    }
 
-     }
-
-    public Post(List<Object> post_img) {
+    public Post(String post_id, String post_title, long post_date, List<Object> post_img, String post_desc) {
+        this.post_id = post_id;
+        this.post_title = post_title;
+        this.post_date = post_date;
         this.post_img = post_img;
-    }
-
-    public List<Object> getPost_img() {
-        return post_img;
+        this.post_desc = post_desc;
     }
 
     public void setPost_img(List<Object> post_img) {
@@ -55,10 +51,12 @@ public class Post {
     }
 
     public String getPost_date() {
-        return post_date;
+        String value = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").
+                format(new java.util.Date(post_date * 1000));
+        return value;
     }
 
-    public void setPost_date(String post_date) {
+    public void setPost_date(long post_date) {
         this.post_date = post_date;
     }
 
@@ -70,15 +68,15 @@ public class Post {
         this.post_desc = post_desc;
     }
 
-    public void im(@NonNull final SimpleCallback<Map<String, Object>> finishedCallback, String post_key){
+    public void im(@NonNull final SimpleCallback<ArrayList<String>> finishedCallback, String post_key){
 
         DatabaseReference mDatabase;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(post_key);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(post_key).child("post_img");
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> newPost = (Map<String, Object>) dataSnapshot.getValue();
+                ArrayList<String> newPost = (ArrayList<String>) dataSnapshot.getValue();
                     finishedCallback.callback(newPost);
             }
 

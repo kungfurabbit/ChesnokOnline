@@ -3,13 +3,16 @@
     package="dev.arounda.chesnock">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
+        android:hardwareAccelerated="false"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" />
@@ -36,6 +39,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dev.arounda.chesnock.MainActivity" />
         </activity>
+        <activity android:name=".ImageViewActivity"></activity>
     </application>
 
 </manifest>

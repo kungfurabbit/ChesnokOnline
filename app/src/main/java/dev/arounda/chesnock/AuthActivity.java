@@ -40,6 +40,15 @@ public class AuthActivity extends AppCompatActivity implements
 
         mAuthButton = (Button) findViewById(R.id.googleBtn);
         mSkippButton = (Button) findViewById(R.id.SkipBtn);
+        mSkippButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mainIntent =  new Intent(AuthActivity.this, MainActivity.class);
+                mainIntent.putExtra("skip", true);
+                startActivity(mainIntent);
+                finish();
+            }
+        });
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar2) ;
 
         mAuthButton.setOnClickListener(this);
