@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +39,7 @@ import java.util.regex.Matcher;
 import Adapter.PostPagerAdapter;
 import Interface.SimpleCallback;
 import Model.Post;
+import me.relex.circleindicator.CircleIndicator;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
-    private Boolean skip;
+    private Boolean isSkiped=false;
 
     public String mUsername,mPhotoUrl,mUserEmail,mUserId;
 
@@ -57,7 +60,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-           auth();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar menu = getSupportActionBar();
+        menu.setLogo(R.mipmap.ab_logotype);
+        menu.setDisplayUseLogoEnabled(true);
+
+        if(getIntent().hasExtra("skip")){
+        isSkiped = getIntent().getExtras().getBoolean("skip");
+        }
+                auth();
+
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
 
@@ -68,27 +83,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void auth(){
-        mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+        if(!isSkiped) {
+            mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
-                .build();
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API)
+                    .build();
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        if (mFirebaseUser == null ) {
-            startActivity(new Intent(this, AuthActivity.class));
-            finish();
-            return;
-        } else {
-            mUsername = mFirebaseUser.getDisplayName();
-            if (mFirebaseUser.getPhotoUrl() != null) {
-                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            mFirebaseAuth = FirebaseAuth.getInstance();
+            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+            if (mFirebaseUser == null) {
+                startActivity(new Intent(this, AuthActivity.class));
+                finish();
+                return;
+            } else {
+                mUsername = mFirebaseUser.getDisplayName();
+                if (mFirebaseUser.getPhotoUrl() != null) {
+                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+                }
+                mUserEmail = mFirebaseUser.getEmail();
+                mUserId = mFirebaseUser.getUid();
+                CheckUserExist();
             }
-            mUserEmail = mFirebaseUser.getEmail();
-            mUserId = mFirebaseUser.getUid();
-            CheckUserExist();
         }
     }
 
@@ -116,9 +133,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 Matcher m = Patterns.WEB_URL.matcher(url[i]);
                                 while (m.find()) {
                                     String urls = m.group();
-                                    String res = url[i].substring(url[i].indexOf("url")+4, url[i].indexOf("}"));
-                                    viewHolder.UriList.add(res);
-                                    viewHolder.imgesList.add(res);
+                                    viewHolder.UriList.add(urls);
+                                    viewHolder.imgesList.add(urls);
                                 }
                             }
                         }
@@ -130,22 +146,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 viewHolder.setDate(model.getPost_date());
                 viewHolder.setDesc(model.getPost_desc());
 
-                if(mUserId != null){
                 viewHolder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent commentActivity  = new Intent(MainActivity.this, CommentActivity.class);
                         commentActivity.putExtra("post_id", post_key);
-                        commentActivity.putExtra("user_id", mUserId);
-                        startActivity(commentActivity   );
+                        if(mUserId != null) {
+                            commentActivity.putExtra("user_id", mUserId);
+                        }
+                        startActivity(commentActivity);
+
                     }
                 });
-            } else{
-                    startActivity(new Intent(MainActivity.this, AuthActivity.class));
-                    finish();
-                }
-
             }
+
+
         };
         mPostList.setAdapter(firebaseRecyclerAdapter);
 
@@ -181,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (item.getItemId() == R.id.menu_contacts)
         {
             startActivity(new Intent(this, ContactActivity.class));
-            finish();
+
         }
         return true;
     }
@@ -231,7 +246,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         public void setImgPager(ArrayList<String> imgList){
             PostPagerAdapter mCustomPagerAdapter = new PostPagerAdapter(mContext, imgList);
             ViewPager mViewPager = (ViewPager)mView. findViewById(R.id.pagerView);
+            CircleIndicator indicator =(CircleIndicator)mView.findViewById(R.id.indicator);
             mViewPager.setAdapter(mCustomPagerAdapter);
+            indicator.setViewPager(mViewPager);
+
         }
 
     }

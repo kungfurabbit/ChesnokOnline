@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.List;
 
 import Interface.SimpleCallback;
 
@@ -22,13 +22,18 @@ public class Comment {
     private String comment_text;
     private String user_id;
     private long date;
+    List<Object> comment_img = new ArrayList<Object>();
+
+    private String[] MonthName = {"Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
+            "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"};
 
     public Comment(){}
 
-    public Comment(String comment_text, String user_id, long date) {
+    public Comment(String comment_text, String user_id, long date, List<Object> comment_img) {
         this.comment_text = comment_text;
         this.user_id = user_id;
         this.date = date;
+        this.comment_img = comment_img;
     }
 
     public String getComment_text() {
@@ -53,22 +58,28 @@ public class Comment {
 
 
     public String getDate() {
-        String value = null;
-        GregorianCalendar gcalendar = new GregorianCalendar();
-        Long dateCurrent = gcalendar.getTimeInMillis();
-        Long valueTime = dateCurrent-date;
-        if(valueTime<3){
-            value = valueTime.toString();
-        }
-        else if(valueTime >=3) {
-           value = new java.text.SimpleDateFormat("dd/MM/yy HH:mm").
-                    format(new java.util.Date((dateCurrent - date) * 100));
-        }
+
+        String month = new java.text.SimpleDateFormat("MM").
+                format(new java.util.Date(date * 1000));
+        int monthnumber = Integer.parseInt(month);
+
+        String value = new java.text.SimpleDateFormat("dd ").
+                format(new java.util.Date(date * 1000));
+        value +=MonthName[monthnumber-1];
+        value+= new java.text.SimpleDateFormat(" HH:mm").
+                format(new java.util.Date(date * 1000));
         return value;
     }
-
     public void setDate(long date) {
         this.date = date;
+    }
+
+    public List<Object> getComment_img() {
+        return comment_img;
+    }
+
+    public void setComment_img(List<Object> comment_img) {
+        this.comment_img = comment_img;
     }
 
     public void getListImg(@NonNull final SimpleCallback<ArrayList<String>> finishedCallback, String post_key, String comment_key){

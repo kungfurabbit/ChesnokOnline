@@ -24,6 +24,7 @@ CustomPagerAdapter mCustomPagerAdapter;
 
         ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mCustomPagerAdapter);
+
     }
 
 }

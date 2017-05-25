@@ -2,12 +2,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@color/white"/>
+        android:drawable="@mipmap/bg_loading"/>
 
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/splash_screen"/>
+            android:src="@mipmap/logotype"/>
+
     </item>
 
 </layer-list>

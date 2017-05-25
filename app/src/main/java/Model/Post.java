@@ -22,6 +22,7 @@ public class Post {
     private String  post_title;
     private long  post_date;
     List<Object> post_img = new ArrayList<Object>();
+    ArrayList<String> listUrl = new ArrayList<String>();
     private String  post_desc;
 
      public Post(){    }
@@ -67,7 +68,6 @@ public class Post {
     public void setPost_desc(String post_desc) {
         this.post_desc = post_desc;
     }
-
     public void im(@NonNull final SimpleCallback<ArrayList<String>> finishedCallback, String post_key){
 
         DatabaseReference mDatabase;
@@ -77,15 +77,15 @@ public class Post {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<String> newPost = (ArrayList<String>) dataSnapshot.getValue();
-                    finishedCallback.callback(newPost);
+                finishedCallback.callback(newPost);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
         });
 
     }
-
 }

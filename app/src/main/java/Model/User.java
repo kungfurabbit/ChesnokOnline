@@ -56,7 +56,6 @@ public class User {
     public  void getInfo(final SimpleCallback<Map<String, Object>> finishedCallback, String user_id){
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
-
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

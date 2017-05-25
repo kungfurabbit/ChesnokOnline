@@ -8,4 +8,6 @@
     tools:context="dev.arounda.chesnock.ContactActivity"
     tools:showIn="@layout/activity_contact">
 
+
+
 </android.support.constraint.ConstraintLayout>
