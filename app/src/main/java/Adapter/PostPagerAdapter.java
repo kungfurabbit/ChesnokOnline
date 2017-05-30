@@ -50,7 +50,6 @@ public class PostPagerAdapter extends PagerAdapter {
         final ProgressBar progressBar = (ProgressBar)itemView.findViewById(R.id.ImgProgressBar);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.post_img);
         Uri uri = Uri.parse(listUrl.get(position));
-
         Picasso
                 .with(mContext)
                 .load(uri)
@@ -69,6 +68,7 @@ public class PostPagerAdapter extends PagerAdapter {
                     }
                 });
         container.addView(itemView);
+
 
         return itemView;
     }

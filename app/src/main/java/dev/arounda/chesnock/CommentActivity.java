@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -44,6 +45,7 @@ import com.google.firebase.storage.UploadTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -61,7 +63,6 @@ public class CommentActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private StorageReference mStorage;
 
-    ArrayList<String> listUri = new ArrayList<String>();
 
     private  Uri imageUri = null;
     private RecyclerView mCommentList;
@@ -69,6 +70,7 @@ public class CommentActivity extends AppCompatActivity {
 
     private ImageButton sendBtn;
     private ImageButton mGalleryButton;
+    private TextView ToolTitle;
 
 
     private ProgressDialog mProgress;
@@ -85,17 +87,16 @@ public class CommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
         MultiDex.install(this);
+
+        Typeface CFB = Typeface.createFromAsset(getAssets(), "NotoSans-Bold.ttf");
+        ToolTitle = (TextView)findViewById(R.id.toolbar_title);
+        ToolTitle.setTypeface(CFB);
+
         layoutParamsImg = new LinearLayout.LayoutParams(100, 100);
         layoutViewImage =  (LinearLayout)findViewById(R.id.image_container);
 
         mGalleryButton = (ImageButton)findViewById(R.id.galerryBtn);
         commentText = (EditText)findViewById(R.id.commentEditText);
-        commentText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                commentText.setText(null);
-            }
-        });
 
         sendBtn = (ImageButton)findViewById(R.id.sendButton);
 
@@ -106,20 +107,26 @@ public class CommentActivity extends AppCompatActivity {
 
         menu.setDisplayHomeAsUpEnabled(true);
 
+
+
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
+
+
         mGalleryButton.setVisibility(View.VISIBLE);
         commentText.setVisibility(View.VISIBLE);
         sendBtn.setVisibility(View.VISIBLE);
 
         if(!getIntent().hasExtra("user_id")){
-            mGalleryButton.setVisibility(View.INVISIBLE);
-            commentText.setVisibility(View.INVISIBLE);
-            sendBtn.setVisibility(View.INVISIBLE);
+            mGalleryButton.setVisibility(View.GONE);
+            commentText.setVisibility(View.GONE);
+            sendBtn.setVisibility(View.GONE);
 
              authButton = (Button)findViewById(R.id.auth);
             authButton.setVisibility(View.VISIBLE);
@@ -149,6 +156,8 @@ public class CommentActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         mProgress = new ProgressDialog(this);
 
@@ -192,6 +201,10 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
+
+
+
+
     @Override
     public  void onStart(){
         super.onStart();
@@ -210,6 +223,8 @@ public class CommentActivity extends AppCompatActivity {
                 Typeface CFB = Typeface.createFromAsset(getAssets(), "NotoSans-Bold.ttf");
                 Typeface CFR = Typeface.createFromAsset(getAssets(), "NotoSans-Regular.ttf");
                 Typeface RR = Typeface.createFromAsset(getAssets(), "3966.ttf");
+
+                viewHolder.roundedImageViewArray.clear();
 
                 viewHolder.userViewPost.setTypeface(CFB);
                 viewHolder.commentViewPost.setTypeface(CFR);
@@ -234,16 +249,14 @@ public class CommentActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 viewHolder.listUrl.clear();
-                                listUri.clear();
                                 for(DataSnapshot dt:dataSnapshot.getChildren()){
                                     Matcher m = Patterns.WEB_URL.matcher(dt.getValue().toString());
                                     while (m.find()) {
                                         String urls = m.group();
                                         viewHolder.listUrl.add(urls);
-                                        listUri.add(urls);
                                     }
                                 }
-                                viewHolder.setImage(listUri);
+                                viewHolder.setImage();
                                 viewHolder.imageViewButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -252,8 +265,9 @@ public class CommentActivity extends AppCompatActivity {
                                         startActivity(viewImageIntent);
                                     }
                                 });
-                                if(viewHolder.roundedImageViewArray!=null)
-                                    for(int  i =0; i<viewHolder.listUrl.size(); i++){
+                                if(viewHolder.roundedImageViewArray.size()!=0)
+                                    if(viewHolder.roundedImageViewArray.size()<4)
+                                    for(int  i =0; i<viewHolder.roundedImageViewArray.size(); i++){
                                     viewHolder.roundedImageViewArray.get(i).setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -263,6 +277,17 @@ public class CommentActivity extends AppCompatActivity {
                                         }
                                     });
                                 }
+                                if(viewHolder.roundedImageViewArray.size()>3)
+                                    for(int  i =0; i<3; i++){
+                                        viewHolder.roundedImageViewArray.get(i).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent viewImageIntent = new Intent(CommentActivity.this, ImageViewActivity.class);
+                                                viewImageIntent.putStringArrayListExtra("urls", viewHolder.listUrl);
+                                                startActivity(viewImageIntent);
+                                            }
+                                        });
+                                    }
 
                             }
 
@@ -272,6 +297,7 @@ public class CommentActivity extends AppCompatActivity {
                             }
                         });
                     }
+
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -286,29 +312,23 @@ public class CommentActivity extends AppCompatActivity {
         mCommentList.setAdapter(firebaseRecyclerAdapter);
     }
 
+
+
     private void startPosting(){
-
-        mProgress.setMessage("Sending....");
-        mProgress.show();
         final String textComment = commentText.getText().toString().trim();
-
         if (!TextUtils.isEmpty(textComment)) {
+            mProgress.setMessage("Sending....");
+            mProgress.show();
             final DatabaseReference newComment = mDatabase.push();
             newComment.child("comment_text").setValue(textComment);
             newComment.child("user_id").setValue(user_id);
-            newComment.child("date").setValue(date()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    mProgress.hide();
-                    mProgress.closeOptionsMenu();
-                }
-            });
+            newComment.child("date").setValue(date());
             if (imagesUrl != null) {
                 mProgress.setMessage("Sending....");
                 mProgress.show();
                 for (int i = 0; i < imagesUrl.size(); i++) {
                     final int key = i;
-                    imageUri = Uri.parse(imagesUrl.get(key).toString());
+                    imageUri = Uri.parse(imagesUrl.get(key));
                     newComment.child("comment_img").child(key + "").child("name").setValue(imageUri.getLastPathSegment());
                     StorageReference filepath = mStorage.child("posts_images").child(post_key).child(newComment.getKey()).child(imageUri.getLastPathSegment());
                     filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -322,19 +342,17 @@ public class CommentActivity extends AppCompatActivity {
                     });
                 }
                 layoutViewImage.removeAllViews();
-                mProgress.hide();
-                mProgress.closeOptionsMenu();
                 imagesUrl.clear();
             }
             commentText.setText(null);
+            mProgress.hide();
+            mProgress.closeOptionsMenu();
             hideKeyboard(this);
             if(mCommentList.getAdapter().getItemCount()>1)
             mCommentList.smoothScrollToPosition(mCommentList.getAdapter().getItemCount() - 1);
         }
         else {
             Toast.makeText(CommentActivity.this, "Пожалуйста, введите сообщение", Toast.LENGTH_LONG).show();
-            mProgress.hide();
-            mProgress.closeOptionsMenu();
         }
 
     }
@@ -406,7 +424,7 @@ public class CommentActivity extends AppCompatActivity {
                 layoutParamsImg.setMargins(5, 5, 5, 5);
                 layoutParamsImg.gravity = Gravity.CENTER;
                 final RoundedImageView roundedImageView = new  RoundedImageView(getApplicationContext());
-                imageUri = Uri.parse(imagesUrl.get(i).toString());
+                imageUri = Uri.parse(imagesUrl.get(i));
                 roundedImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 roundedImageView.setRadius(10);
                 roundedImageView.setBorderWidth(4);
@@ -432,7 +450,6 @@ public class CommentActivity extends AppCompatActivity {
     public static class CommentViewHolder extends  RecyclerView.ViewHolder{
         View mView;
         Context mContext;
-        Button viewButton;
         ArrayList<String> listUrl = new ArrayList<String>();
         TextView userViewPost;
         TextView commentViewPost;
@@ -440,20 +457,18 @@ public class CommentActivity extends AppCompatActivity {
         TextView dateView;
         LinearLayout layout;
         Button imageViewButton;
-        RoundedImageView roundedImageView;
         ArrayList<RoundedImageView> roundedImageViewArray = new ArrayList<RoundedImageView>();
 
         public CommentViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
             mContext    = mView.getContext();
-            viewButton = new Button(mContext);
             userViewPost = (TextView)mView.findViewById(R.id.user_textView);
             commentViewPost = (TextView)mView.findViewById(R.id.comment_text);
             userImageView = (CircleImageView) mView.findViewById(R.id.userImageView);
             dateView = (TextView)mView.findViewById(R.id.dateView);
-            imageViewButton = (Button)mView.findViewById(R.id.imageViewButton);
             layout = (LinearLayout) mView.findViewById(R.id.image_container_view);
+            imageViewButton = new Button(mContext);
 
         }
 
@@ -470,38 +485,47 @@ public class CommentActivity extends AppCompatActivity {
             Picasso.with(mContext).load(image).into(userImageView);
         }
 
-        private  void setImage(ArrayList<String> images) {
+        private  void setImage() {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
             layoutParams.setMargins(5, 5, 5, 5);
             layoutParams.gravity = Gravity.CENTER;
             layout.removeAllViews();
-            for (int i = 0; i < images.size(); i++) {
+            int UrlSize = listUrl.size();
+            for (int i = 0; i < UrlSize; i++) {
                 if(i<3){
                     roundedImageViewArray.add(new  RoundedImageView(mContext));
-                    Uri  imageUri = Uri.parse(images.get(i).toString());
-                    roundedImageViewArray.get(roundedImageViewArray.size()-1).setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    roundedImageViewArray.get(roundedImageViewArray.size()-1).setRadius(10);
-                    roundedImageViewArray.get(roundedImageViewArray.size()-1).setSquare(true);
-                    Picasso.with(mContext).load(imageUri).into( roundedImageViewArray.get(roundedImageViewArray.size()-1));
-                    roundedImageViewArray.get(roundedImageViewArray.size()-1).setLayoutParams(layoutParams);
-                    layout.addView( roundedImageViewArray.get(roundedImageViewArray.size()-1));
+                    Uri  imageUri = Uri.parse(listUrl.get(i));
+                    RoundedImageView RIV = roundedImageViewArray.get(roundedImageViewArray.size()-1);
+                    RIV.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    RIV.setRadius(10);
+                    RIV.setSquare(true);
+                    Picasso.with(mContext)
+                            .load(imageUri)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE)
+                            .resizeDimen(R.dimen.comment, R.dimen.comment)
+                            . centerInside()
+                            .into( RIV);
+
+                    RIV.setLayoutParams(layoutParams);
+                    layout.addView(RIV);
                     layout.destroyDrawingCache();
                 }
             }
-            if(listUrl.size() > 3){
-                imageViewButton.setText("+" + (listUrl.size() - 3));
-            }
-            if(listUrl.size() < 4 && listUrl.size() != 0){
-                imageViewButton.setText("" + (listUrl.size()));
+
+            if(UrlSize > 3){
+                imageViewButton.setText("+" + (UrlSize - 3));
+                imageViewButton.setBackgroundResource(R.drawable.morephotobutton);
+                imageViewButton.setTextSize(24);
+                imageViewButton.setTextColor(Color.parseColor("#ffffff"));
             }
             imageViewButton.setLayoutParams(layoutParams);
-//            if(viewButton.getParent()!=null)
-//                ((ViewGroup)viewButton.getParent()).removeView(viewButton); // <- fix
-            layout.addView(imageViewButton);
-            if(listUrl.size() != 0 ){
+          if(imageViewButton.getParent()!=null)
+              ((ViewGroup)imageViewButton.getParent()).removeView(imageViewButton); // <- fix
+            if(UrlSize > 3 ){
                 layout.setVisibility(View.VISIBLE);
+                layout.addView(imageViewButton);
             }
-            else {
+            if(UrlSize == 0) {
                 layout.setVisibility(View.GONE);
             }
             layout.destroyDrawingCache();

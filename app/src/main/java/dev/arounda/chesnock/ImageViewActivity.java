@@ -45,6 +45,7 @@ CustomPagerAdapter mCustomPagerAdapter;
         mViewPager.setAdapter(mCustomPagerAdapter);
         indicator.setViewPager(mViewPager);
 
+
     }
 
 

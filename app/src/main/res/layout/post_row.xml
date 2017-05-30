@@ -1,145 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="16dp"
-    xmlns:foo="http://schemas.android.com/apk/dev.arounda.chesnock"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     >
-        <RelativeLayout
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pagerView"
+            android:layout_width="wrap_content"
+            android:layout_height="258dp" />
+
+        <me.relex.circleindicator.CircleIndicator
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/pagerView" />
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:background="@android:drawable/dialog_holo_light_frame"
+            android:layout_alignBottom="@+id/pagerView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/post_title"
+            android:layout_marginTop="-20dp"
+            android:alpha="0.3"
+            android:background="@drawable/gradient2" />
+
+        <TextView
+            android:id="@+id/post_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/pagerView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="36dp"
+            android:layout_marginLeft="15dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            tools:text="Чеснок онлайн. Украина. Одесска область"
+
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/pagerView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:src="@mipmap/access_time" />
+
+
+        <TextView
+            android:id="@+id/post_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/pagerView"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="39dp"
+            android:text="Post date"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:id="@+id/background_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/pisos"
+            android:layout_marginTop="15dp"
+            android:background="#fafafa"
             >
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pagerView"
-                android:layout_width="wrap_content"
-                android:layout_height="258dp"
-                />
 
-            <me.relex.circleindicator.CircleIndicator
-                android:id="@+id/indicator"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/pagerView" />
 
-            <View
-                android:background="@drawable/gradient2"
-                android:alpha="0.3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/pagerView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="120dp"
-
-                />
-            <TextView
-                android:id="@+id/post_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/pagerView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginBottom="46dp"
-                android:layout_marginLeft="15dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="24sp"
-                android:textColor="#ffffff"
-                tools:text="Чеснок онлайн. Украина. Одесска область"
-
-                />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/pagerView"
-                android:layout_marginLeft="15dp"
-                android:layout_marginBottom="25dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:src="@mipmap/access_time" />
-
-            <TextView
-                android:id="@+id/post_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/pagerView"
-                android:layout_marginBottom="23dp"
-                android:layout_marginLeft="35dp"
-                android:text="Post date"
-                android:textColor="#ffffff"
-                android:textSize="14sp"
-                 />
 
             <RelativeLayout
-                android:id="@+id/background_layout"
+                android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/pisos"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="15dp"
-                android:background="#fafafa"
-                >
-
+                android:layout_centerInParent="true">
 
 
                 <Button
-                    android:id="@+id/comment"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Коментарии"
-                    android:textSize="15sp"
-                    android:textColor="#428d1e"
-                    android:layout_centerInParent="true"
-                    />
+                android:id="@+id/comment"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingLeft="40dp"
+                android:text="Комментарии"
+                android:textColor="#428d1e"
+                android:textSize="15sp" />
 
-                <ImageView
-                    android:id="@+id/comment_img_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/forum"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/comment"
-                    android:layout_toStartOf="@+id/comment" />
+            <ImageView
+                android:id="@+id/comment_img_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/comment"
+                android:layout_alignStart="@+id/comment"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="11dp"
+                android:layout_marginStart="11dp"
+                android:src="@mipmap/forum" />
+
             </RelativeLayout>
+        </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/pisos"
+        <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/pisos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/post_date"
+            android:orientation="vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <com.borjabravo.readmoretextview.ReadMoreTextView
+                android:id="@+id/post_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignTop="@+id/post_date"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                xmlns:tools="http://schemas.android.com/tools">
-
-                <com.borjabravo.readmoretextview.ReadMoreTextView
-                    android:id="@+id/post_desc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="60dp"
-                    android:lineSpacingExtra="7.5sp"
-                    android:textColor="#455a63"
-                    android:textSize="15sp"
-                    app:colorClickableText="@android:color/holo_blue_dark"
-                    app:trimCollapsedText="@string/expanded"
-                    app:trimExpandedText="@string/collapsed"
-                    app:trimLength="1"
-                    app:trimMode="trimModeLine" />
+                android:layout_marginTop="60dp"
+                android:lineSpacingExtra="7.5sp"
+                android:textColor="#455a63"
+                android:textSize="15sp"
+                app:colorClickableText="@android:color/holo_blue_dark"
+                app:trimCollapsedText="@string/expanded"
+                app:trimExpandedText="@string/collapsed"
+                app:trimLength="1"
+                app:trimMode="trimModeLine" />
 
 
-            </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
 
 </android.support.v7.widget.CardView>

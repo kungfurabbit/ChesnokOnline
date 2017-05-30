@@ -35,6 +35,7 @@
             android:layout_marginBottom="74dp"
             android:letterSpacing="0.02"
             android:text="Войти с помощью почты"
+            android:background="@drawable/round_button"
             android:textColor="#2e7d32"
             android:textSize="15sp"
             android:visibility="visible" />
@@ -46,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="24dp"
             android:letterSpacing="0.02"
             android:text="Пропустить"
             android:textColor="@color/skipButton"
