@@ -48,7 +48,7 @@
             android:layout_marginLeft="15dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="#ffffff"
-            android:textSize="24sp"
+            android:textSize="18sp"
             tools:text="Чеснок онлайн. Украина. Одесска область"
 
             />
@@ -96,15 +96,15 @@
 
 
                 <Button
-                android:id="@+id/comment"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingLeft="40dp"
-                android:text="Комментарии"
-                android:textColor="#428d1e"
-                android:textSize="15sp" />
+                    android:id="@+id/comment"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="40dp"
+                    android:text="Комментарии"
+                    android:textColor="#428d1e"
+                    android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/comment_img_btn"

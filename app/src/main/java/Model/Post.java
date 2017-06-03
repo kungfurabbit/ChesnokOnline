@@ -21,6 +21,7 @@ public class Post {
     private String  post_id;
     private String  post_title;
     private long  post_date;
+    private int  post_comment_count;
     List<Object> post_img = new ArrayList<Object>();
     ArrayList<String> listUrl = new ArrayList<String>();
     private String  post_desc;
@@ -29,9 +30,10 @@ public class Post {
 
      public Post(){    }
 
-    public Post(String post_id, String post_title, long post_date, List<Object> post_img, String post_desc) {
+    public Post(String post_id, String post_title, long post_date, List<Object> post_img, String post_desc, int post_comment_count) {
         this.post_id = post_id;
         this.post_title = post_title;
+        this.post_comment_count = post_comment_count;
         this.post_date = post_date;
         this.post_img = post_img;
         this.post_desc = post_desc;
@@ -51,6 +53,13 @@ public class Post {
 
     public void setPost_title(String post_title) {
         this.post_title = post_title;
+    }
+
+    public int getPost_comment_count(){
+        return post_comment_count;
+    }
+    public void setPost_comment_count(int post_comment_count){
+        this.post_comment_count = post_comment_count;
     }
 
     public String getPost_date() {

@@ -2,6 +2,7 @@ package dev.arounda.chesnock;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,6 +40,8 @@ import Adapter.PostPagerAdapter;
 import Interface.SimpleCallback;
 import Model.Post;
 import me.relex.circleindicator.CircleIndicator;
+
+import static Adapter.utilFuncAdapter.choosePluralMerge;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
@@ -167,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 viewHolder.setTitle(model.getPost_title());
                 viewHolder.setDate(model.getPost_date());
                 viewHolder.setDesc(model.getPost_desc());
+                viewHolder.setComment_Count(model.getPost_comment_count());
                 viewHolder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -178,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                     startActivity(commentActivity);
                                 }
                             });
+
 
                 viewHolder.lay.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -239,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         TextView descViewPost;
         ViewPager mViewPager;
         CircleIndicator indicator;
+        ImageView CommentImg;
+
         public PostViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
@@ -251,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             descViewPost = (TextView)mView.findViewById(R.id.post_desc);
             mViewPager = (ViewPager)mView. findViewById(R.id.pagerView);
             indicator =(CircleIndicator)mView.findViewById(R.id.indicator);
+            CommentImg = (ImageView)mView.findViewById(R.id.comment_img_btn);
         }
 
         public void setTitle(String title){
@@ -263,6 +271,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         public void setDesc(String desc){
             descViewPost.setText(desc);
+        }
+
+        public void setComment_Count(int count){
+            if(count==0){
+                mCommentButton.setTextColor(Color.parseColor("#455a63"));
+                CommentImg.setImageResource(R.mipmap.forum_b);
+            }
+            else{
+                mCommentButton.setTextColor(Color.parseColor("#428d1e"));
+                CommentImg.setImageResource(R.mipmap.forum);
+            }
+            mCommentButton.setText(choosePluralMerge(count, "Комментарий", "Коментария", "Коментариев"));
         }
 
 

@@ -71,6 +71,7 @@ public class CommentActivity extends AppCompatActivity {
     private ImageButton sendBtn;
     private ImageButton mGalleryButton;
     private TextView ToolTitle;
+    private int comment_count;
 
 
     private ProgressDialog mProgress;
@@ -198,6 +199,8 @@ public class CommentActivity extends AppCompatActivity {
         mCommentList.setHasFixedSize(true);
 
         mCommentList.setLayoutManager(new LinearLayoutManager(this));
+
+
 
     }
 
@@ -344,10 +347,16 @@ public class CommentActivity extends AppCompatActivity {
                 layoutViewImage.removeAllViews();
                 imagesUrl.clear();
             }
+
             commentText.setText(null);
             mProgress.hide();
             mProgress.closeOptionsMenu();
             hideKeyboard(this);
+
+            comment_count = mCommentList.getChildCount();
+            comment_count++;
+            FirebaseDatabase.getInstance().getReference().child("posts").child(post_key).child("post_comment_count").setValue(comment_count);
+
             if(mCommentList.getAdapter().getItemCount()>1)
             mCommentList.smoothScrollToPosition(mCommentList.getAdapter().getItemCount() - 1);
         }

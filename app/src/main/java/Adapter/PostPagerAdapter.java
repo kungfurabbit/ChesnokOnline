@@ -1,6 +1,7 @@
 package Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import dev.arounda.chesnock.ImageViewActivity;
 import dev.arounda.chesnock.R;
 
 /**
@@ -67,6 +69,15 @@ public class PostPagerAdapter extends PagerAdapter {
 
                     }
                 });
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent viewImageIntent = new Intent(mContext, ImageViewActivity.class);
+                viewImageIntent.putStringArrayListExtra("urls", listUrl);
+                mContext.startActivity(viewImageIntent);
+            }
+        });
         container.addView(itemView);
 
 
